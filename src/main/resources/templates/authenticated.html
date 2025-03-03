@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+        }
+        p {
+            color: #555;
+        }
+        a {
+            text-decoration: none;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .logout-button {
+            background-color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+<h1>Вы успешно вошли. Поздравляю!</h1>
+<p>Перейдите в свою учётную запись.</p>
+
+<div sec:authorize="hasRole('USER')">
+    <a th:href="@{/user}"><button>User</button></a>
+</div>
+
+<div sec:authorize="hasRole('ADMIN')">
+    <a th:href="@{/admin}"><button>Admin</button></a>
+</div>
+
+<form th:action="@{/logout}" method="post">
+    <button type="submit" class="logout-button">Logout</button>
+</form>
+</body>
+</html>

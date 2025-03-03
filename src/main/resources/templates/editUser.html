@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>Edit User</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        form {
+            max-width: 400px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        a {
+            display: inline-block;
+            margin-top: 20px;
+            color: #007bff;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+<div>
+    <h1>Edit User</h1>
+    <form th:action="@{/admin/edit}" method="post" th:object="${user}">
+        <input type="hidden" th:field="*{id}"/> <!-- Скрытое поле для ID пользователя -->
+
+        <label for="username">Username:</label>
+        <input type="text" id="username" th:field="*{username}" required/><br/>
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" th:field="*{password}" required/><br/>
+
+        <label for="roles">Roles:</label>
+        <input type="text" id="roles" th:field="*{roles}" placeholder="ROLE_USER,ROLE_ADMIN"/><br/>
+
+        <button type="submit">Update User</button>
+    </form>
+    <a th:href="@{/admin}">Back to Admin Panel</a>
+</div>
+</body>
+</html>
