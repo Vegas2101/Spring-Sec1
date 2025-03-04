@@ -14,8 +14,12 @@ import spring.springsec1.service.UserService;
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+
+    private final UserService userService;
     @Autowired
-    UserService userService;
+    public WebSecurityConfig(UserService userService) {
+        this.userService = userService;
+    }
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
@@ -29,10 +33,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .disable()
                 .authorizeRequests()
 
-                .antMatchers("/registration").not().fullyAuthenticated()
+                .antMatchers("/user/registration").permitAll()
 
                 .antMatchers("/admin/**").hasRole("ADMIN")
-                .antMatchers("/news").hasRole("USER")
+                .antMatchers("/user/**").hasAnyRole("USER", "ADMIN")
 
                 .antMatchers("/", "/resources/**").permitAll()
 
@@ -42,7 +46,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .formLogin()
                 .loginPage("/login")
 
-                .defaultSuccessUrl("/authorize", true)
+                .defaultSuccessUrl("/user/authorize", true)
+                
                 .permitAll()
                 .and()
                 .logout()

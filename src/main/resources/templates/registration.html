@@ -50,7 +50,7 @@
 </head>
 <body>
 <div>
-    <form th:action="@{/registration}" th:object="${userForm}" method="POST">
+    <form th:action="@{/user/registration}" th:object="${userForm}" method="POST">
         <h2>Регистрация</h2>
         <div>
             <input type="text" th:field="*{username}" placeholder="Username" autofocus="true"/>

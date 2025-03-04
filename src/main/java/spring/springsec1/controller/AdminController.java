@@ -8,6 +8,7 @@ import spring.springsec1.entity.User;
 import spring.springsec1.service.UserService;
 
 @Controller
+@RequestMapping ("/admin")
 public class AdminController {
 
     private final UserService userService;
@@ -17,19 +18,19 @@ public class AdminController {
         this.userService = userService;
     }
 
-    @GetMapping("/admin")
+    @GetMapping
     public String userList(Model model) {
         model.addAttribute("allUsers", userService.allUsers());
         return "admin";
     }
 
-    @GetMapping("/admin/gt/{userId}")
+    @GetMapping("/gt/{userId}")
     public String gtUser(@PathVariable("userId") Long userId, Model model) {
         model.addAttribute("allUsers", userService.usergtList(userId));
         return "admin";
     }
 
-    @PostMapping("/admin")
+    @PostMapping
     public String deleteUser(@RequestParam(required = true, defaultValue = "") Long userId,
                              @RequestParam(required = true, defaultValue = "") String action,
                              Model model) {
@@ -39,26 +40,26 @@ public class AdminController {
         return "redirect:/admin";
     }
 
-    @GetMapping("/admin/new")
+    @GetMapping("/new")
     public String createUserForm(Model model) {
         model.addAttribute("user", new User());
         return "createUser";
     }
 
-    @PostMapping("/admin/new")
+    @PostMapping("/new")
     public String createUser(User user) {
         userService.saveUser(user);
         return "redirect:/admin";
     }
 
-    @GetMapping("/admin/edit/{userId}")
+    @GetMapping("/edit/{userId}")
     public String editUserForm(@PathVariable("userId") Long userId, Model model) {
         User user = userService.findUserById(userId);
         model.addAttribute("user", user);
         return "editUser";
     }
 
-    @PostMapping("/admin/edit")
+    @PostMapping("/edit")
     public String updateUser(@ModelAttribute("user") User user) {
         userService.updateUser(user);
         return "redirect:/admin";

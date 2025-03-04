@@ -1,7 +1,7 @@
 package spring.springsec1.service;
 
 
-import jakarta.transaction.Transactional;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -16,6 +16,7 @@ import spring.springsec1.entity.User;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -24,21 +25,26 @@ import java.util.Optional;
 public class UserService implements UserDetailsService {
     @PersistenceContext
     private EntityManager em;
-    @Autowired
-    UserRepository userRepository;
-    @Autowired
-    RoleRepository roleRepository;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
 
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    @Autowired
+    public UserService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
     @Override
+    @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username);
 
         if (user == null) {
             throw new UsernameNotFoundException("User not found");
         }
-
+        Hibernate.initialize(user.getRoles());
         return user;
     }
 

@@ -24,11 +24,23 @@
             text-decoration: none;
             border-radius: 5px;
         }
+        .return-button {
+            display: inline-block;
+            padding: 7px 7px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+        }
     </style>
 </head>
 <body>
 <h2>Welcome, User!</h2>
 <p>This is a user page, accessible only to users with ROLE_USER.</p>
 <a th:href="@{/logout}">Logout</a>
+<br><br><br><br>
+<a class="return-button" th:href="@{/user/authorize}">Вернуться на главную страницу</a>
 </body>
 </html>
