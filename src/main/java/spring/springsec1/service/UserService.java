@@ -13,18 +13,14 @@ import spring.springsec1.dao.UserRepository;
 import spring.springsec1.entity.Role;
 import spring.springsec1.entity.User;
 
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class UserService implements UserDetailsService {
-    @PersistenceContext
-    private EntityManager em;
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
@@ -58,16 +54,22 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    public boolean saveUser(User user) {
+    public boolean saveUser(User user, Set<Long> roleIds) {
         User userFromDB = userRepository.findByUsername(user.getUsername());
-
         if (userFromDB != null) {
             return false;
         }
-        Role userRole = roleRepository.findByName("ROLE_USER");
-        user.setRoles(Collections.singleton(userRole));
+
+        List<Role> rolesList = roleRepository.findAllById(roleIds);
+        Set<Role> roles = new HashSet<>(rolesList);
+
+        if (roles.isEmpty()) {
+            throw new IllegalArgumentException("Роли не найдены");
+        }
+        user.setRoles(roles);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
+
         return true;
     }
 
@@ -81,25 +83,29 @@ public class UserService implements UserDetailsService {
 
     @Transactional
     public List<User> usergtList(Long idMin) {
-        return em.createQuery("SELECT u FROM User u WHERE u.id > :paramId", User.class)
-                .setParameter("paramId", idMin).getResultList();
+        return userRepository.findByIdGreaterThan(idMin);
     }
 
     @Transactional
-    public void updateUser(User user) {
+    public void updateUser(User user, List<Long> roleIds) {
         User existingUser = userRepository.findById(user.getId()).orElse(null);
         if (existingUser != null) {
-
             if (!user.getPassword().equals(existingUser.getPassword())) {
-
                 user.setPassword(passwordEncoder.encode(user.getPassword()));
             }
+            List<Role> rolesList = roleRepository.findAllById(roleIds);
+            Set<Role> roles = new HashSet<>(rolesList);
 
+            if (roles.isEmpty()) {
+                throw new IllegalArgumentException("Роли не найдены");
+            }
             existingUser.setUsername(user.getUsername());
             existingUser.setPassword(user.getPassword());
-            existingUser.setRoles(user.getRoles());
-
+            existingUser.setRoles(roles);
             userRepository.save(existingUser);
         }
+    }
+    public List<Role> getAllRoles() {
+        return roleRepository.findAll();
     }
 }

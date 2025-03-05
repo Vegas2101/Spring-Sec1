@@ -26,16 +26,16 @@
             color: #555;
         }
         input[type="text"],
-        input[type="password"] {
-            width: 100%;
-            padding: 8px;
+        input[type="password"],
+        input[type="checkbox"] {
             margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+        }
+        input[type="checkbox"] {
+            margin-right: 10px;
         }
         button {
             padding: 10px 20px;
-            background-color: #28a745;
+            background-color: #007bff;
             color: white;
             border: none;
             border-radius: 4px;
@@ -53,7 +53,8 @@
 <div>
     <h1>Edit User</h1>
     <form th:action="@{/admin/edit}" method="post" th:object="${user}">
-        <input type="hidden" th:field="*{id}"/>
+        <!-- Скрытое поле для ID пользователя -->
+        <input type="hidden" th:field="*{id}" />
 
         <label for="username">Username:</label>
         <input type="text" id="username" th:field="*{username}" required/><br/>
@@ -61,8 +62,17 @@
         <label for="password">Password:</label>
         <input type="password" id="password" th:field="*{password}" required/><br/>
 
-        <label for="roles">Roles:</label>
-        <input type="text" id="roles" th:field="*{roles}" placeholder="ROLE_USER,ROLE_ADMIN"/><br/>
+        <label>Roles:</label><br>
+        <div th:each="role : ${AllRoles}">
+            <input type="checkbox"
+                   th:field="*{roles}"
+                   th:value="${role.id}"
+                   th:id="${'role_' + role.id}"
+                   th:checked="${user.roles.contains(role)}">
+            <label th:for="${'role_' + role.id}" th:text="${role.name}"></label><br>
+        </div>
+
+        <br>
 
         <button type="submit">Update User</button>
     </form>

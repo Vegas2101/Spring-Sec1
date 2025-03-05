@@ -7,6 +7,9 @@ import org.springframework.web.bind.annotation.*;
 import spring.springsec1.entity.User;
 import spring.springsec1.service.UserService;
 
+import java.util.List;
+import java.util.Set;
+
 @Controller
 @RequestMapping ("/admin")
 public class AdminController {
@@ -43,12 +46,17 @@ public class AdminController {
     @GetMapping("/new")
     public String createUserForm(Model model) {
         model.addAttribute("user", new User());
+        model.addAttribute("allRoles", userService.getAllRoles()); // Передаем все роли в форму
         return "createUser";
     }
 
     @PostMapping("/new")
-    public String createUser(User user) {
-        userService.saveUser(user);
+    public String createUser(@ModelAttribute("user") User user,
+                             @RequestParam("roles") Set<Long> roleIds) { // Принимаем выбранные роли
+        if (roleIds == null || roleIds.isEmpty()) {
+            throw new IllegalArgumentException("Роли не выбраны");
+        }
+        userService.saveUser(user, roleIds); // Передаем роли в сервис
         return "redirect:/admin";
     }
 
@@ -56,12 +64,17 @@ public class AdminController {
     public String editUserForm(@PathVariable("userId") Long userId, Model model) {
         User user = userService.findUserById(userId);
         model.addAttribute("user", user);
+        model.addAttribute("AllRoles", userService.getAllRoles());
         return "editUser";
     }
 
     @PostMapping("/edit")
-    public String updateUser(@ModelAttribute("user") User user) {
-        userService.updateUser(user);
+    public String updateUser(@ModelAttribute("user") User user,
+                             @RequestParam("roles") List<Long> roleIds) { // Принимаем выбранные роли
+        if (roleIds == null || roleIds.isEmpty()) {
+            throw new IllegalArgumentException("Роли не выбраны");
+        }
+        userService.updateUser(user, roleIds); // Передаем роли в сервис
         return "redirect:/admin";
     }
 }
