@@ -32,6 +32,7 @@ public class UserService implements UserDetailsService {
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
     }
+
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -105,7 +106,12 @@ public class UserService implements UserDetailsService {
             userRepository.save(existingUser);
         }
     }
+
     public List<Role> getAllRoles() {
         return roleRepository.findAll();
+    }
+
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username);
     }
 }
